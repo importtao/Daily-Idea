@@ -40,12 +40,10 @@ export default [
           message: 'Login failed, unable to get user details.'
         }
       }
-
       return {
         code: 20000,
         data: info
       }
     }
   }
-
 ]

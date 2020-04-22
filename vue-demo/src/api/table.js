@@ -7,3 +7,10 @@ export function getList(params) {
     params
   })
 }
+
+export function getAutoTable() {
+  return request({
+    url: '/demo/table/auto-table',
+    method: 'get'
+  })
+}
