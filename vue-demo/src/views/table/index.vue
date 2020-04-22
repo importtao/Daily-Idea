@@ -1,79 +1,76 @@
+
 <template>
-  <div class="app-container">
-    <el-table
+  <div class="container">
+    <AutoTable
+      v-model="currentSelectedRow"
       v-loading="listLoading"
-      :data="list"
-      element-loading-text="Loading"
-      border
-      fit
+      style="width: 80%"
+      :width-option="widthOption"
       highlight-current-row
+      :table-head="customTableHead"
+      :table-data="tableData"
+      border
+      :show-operation="true"
     >
-      <el-table-column align="center" label="ID" width="95">
-        <template slot-scope="scope">
-          {{ scope.$index }}
-        </template>
-      </el-table-column>
-      <el-table-column label="Title">
-        <template slot-scope="scope">
-          {{ scope.row.title }}
-        </template>
-      </el-table-column>
-      <el-table-column label="Author" width="110" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.author }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="Pageviews" width="110" align="center">
-        <template slot-scope="scope">
-          {{ scope.row.pageviews }}
-        </template>
-      </el-table-column>
-      <el-table-column class-name="status-col" label="Status" width="110" align="center">
-        <template slot-scope="scope">
-          <el-tag :type="scope.row.status | statusFilter">{{ scope.row.status }}</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column align="center" prop="created_at" label="Display_time" width="200">
-        <template slot-scope="scope">
-          <i class="el-icon-time" />
-          <span>{{ scope.row.display_time }}</span>
-        </template>
-      </el-table-column>
-    </el-table>
+      <template #time="{tableHeadItem}">
+        <!-- vue 2.6自定义插槽的写法 -->
+        <el-table-column :label="tableHeadItem.label" width="130">
+          <template slot-scope="scope">
+            {{ scope.row.time }}
+            <el-input v-model="scope.row.first" />
+          </template>
+        </el-table-column>
+      </template>
+      <template #operate-current-row="{row}">
+        <el-button size="mini" type="danger" @click="test(row)">删除</el-button>
+        <!-- //operate-current-row为自定义组件的插槽名，比如你可以写按钮，弹框，message都可以 -->
+        <!-- show-operation='true'才可以显示 -->
+        <!-- 没有对应上的我们默认显示 -   -->
+      </template>
+    </AutoTable>
   </div>
 </template>
-
 <script>
-import { getList } from '@/api/table'
+import AutoTable from '@/components/AutoTable'
+import { getAutoTable } from '@/api/table'
 
 export default {
-  filters: {
-    statusFilter(status) {
-      const statusMap = {
-        published: 'success',
-        draft: 'gray',
-        deleted: 'danger'
-      }
-      return statusMap[status]
-    }
-  },
+  components: { AutoTable },
   data() {
     return {
-      list: null,
-      listLoading: true
+      listLoading: true,
+      currentSelectedRow: {}, // 绑定当前行
+      widthOption: {
+        type: '200'
+      }, // 自定义表格宽度
+      customTableHead: [], // 自定义表头
+      tableData: []
     }
   },
   created() {
-    this.fetchData()
+    this.getTableList()
   },
   methods: {
-    fetchData() {
+    getTableList() {
       this.listLoading = true
-      getList().then(response => {
-        this.list = response.data.items
-        this.listLoading = false
-      })
+      getAutoTable()
+        .then(res => {
+          console.log(res, 'res')
+          this.tableData = res.data.tableData
+          this.customTableHead = res.data.customTableHead
+        })
+        .catch(err => {
+          console.log('err', err)
+        })
+        .finally(() => {
+          this.listLoading = false
+        })
+    },
+    test() {
+      this.$message.success('点击成功！')
     }
   }
 }
 </script>
+<style lang='scss' scoped>
+</style>

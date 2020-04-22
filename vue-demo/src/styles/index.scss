@@ -63,3 +63,8 @@ div:focus {
 .app-container {
   padding: 20px;
 }
+.container {
+  background-color: #fff;
+  padding: 50px;
+  min-height: calc(100vh - 84px);
+}
