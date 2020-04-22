@@ -31,7 +31,11 @@ export default [
     type: 'get',
     response: config => {
       return {
+<<<<<<< HEAD
         code: 20000,
+=======
+        code: 200,
+>>>>>>> bd99c40a2e8c6881e60f981b37963b3e1c98246a
         data: {
           customTableHead: [
             { label: '视频', field: 'video' },
